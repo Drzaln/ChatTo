@@ -3,6 +3,7 @@ import { View, StatusBar, StyleSheet } from 'react-native'
 import { Appbar, FAB } from 'react-native-paper'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 import GetLocation from 'react-native-get-location'
+import firebase from "react-native-firebase";
 
 export default class Home extends Component {
   constructor (props) {
@@ -10,11 +11,21 @@ export default class Home extends Component {
     this.state = {
       mapRegion: null,
       latitude: 0,
-      longitude: 0
+      longitude: 0,
+      currentUser: null
     }
   }
+
+  logout = () => {
+    firebase.auth().signOut()
+    .then(() => this.props.navigation.navigate('Login'))
+  }
+
   componentDidMount = async () => {
     await this.currentPosition()
+    const { currentUser } = firebase.auth()
+
+    this.setState({ currentUser })
   }
 
   currentPosition () {
@@ -54,7 +65,6 @@ export default class Home extends Component {
           <MapView
             showsCompass={false}
             showsUserLocation
-            followsUserLocation
             provider={PROVIDER_GOOGLE}
             style={styles.map}
             region={this.state.mapRegion}
@@ -108,8 +118,8 @@ export default class Home extends Component {
             />
             <Appbar.Action
               color='#589167'
-              icon='menu'
-              onPress={() => console.log('Pressed delete')}
+              icon='exit-to-app'
+              onPress={() => this.logout()}
             />
           </Appbar>
         </View>

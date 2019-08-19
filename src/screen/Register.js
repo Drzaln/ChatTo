@@ -10,56 +10,27 @@ import {
 import { Button } from 'react-native-paper'
 import Spinner from 'react-native-loading-spinner-overlay'
 import styles from '../style/Form'
+import firebase from 'react-native-firebase'
 
 class Register extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      user: [],
-      spinner: false
-    }
+  state = {
+    username: '',
+    email: '',
+    password: '',
+    errMessage: null,
+    spinner: false
   }
-  render () {
-    const add = () => {
-      this.setState({
-        spinner: true
-      })
-      this.state.user.push({
-        email: this.state.email,
-        password: this.state.password,
-        username: this.state.username
-      })
-      adduser()
-    }
-    let adduser = async () => {
-      console.log(`testes`, this.state.user)
-      await this.props
-        .dispatch(addUser(this.state.user[0]))
-        .then(() => {
-          this.setState({
-            spinner: false
-          })
-          this.props.navigation.navigate('Login')
-          Alert.alert('Register Success', `Please login to save score`, [
-            {
-              text: 'Login',
-              onPress: () => this.props.navigation.navigate('Login')
-            }
-          ])
-        })
-        .catch(() => {
-          this.setState({
-            spinner: false
-          })
-          Alert.alert('Register Failed', `Username already used`, [
-            {
-              text: 'Okay',
-              onPress: () => this.props.navigation.navigate('Login')
-            }
-          ])
-        })
-    }
 
+  register = () => {
+    const { email, password } = this.state
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(user => this.props.navigation.navigate('Home'))
+      .catch(error => this.setState({errMessage: error.message}))
+  }
+
+  render () {
     return (
       <>
         <StatusBar
@@ -90,6 +61,7 @@ class Register extends Component {
                   this.firstTextInput.focus()
                 }}
                 onChangeText={username => this.setState({ username })}
+                // value={this.state.username}
                 returnKeyType={'next'}
                 placeholder='Username'
                 placeholderTextColor='grey'
@@ -106,6 +78,7 @@ class Register extends Component {
                   this.secondTextInput.focus()
                 }}
                 onChangeText={email => this.setState({ email })}
+                // value={this.state.email}
                 returnKeyType={'next'}
                 keyboardType='email-address'
                 placeholder='Email'
@@ -117,6 +90,7 @@ class Register extends Component {
                   this.secondTextInput = input
                 }}
                 onChangeText={password => this.setState({ password })}
+                // value={this.state.password}
                 style={styles.inputText}
                 placeholder='Password'
                 placeholderTextColor='grey'
@@ -126,7 +100,7 @@ class Register extends Component {
               <Button
                 icon='add'
                 mode='contained'
-                onPress={add}
+                onPress={() => this.register()}
                 style={styles.buttonLogin}
               >
                 register

@@ -8,47 +8,28 @@ import {
 } from 'react-native'
 import { Button } from 'react-native-paper'
 import Spinner from 'react-native-loading-spinner-overlay'
-import styles from "../style/Form";
+import firebase from 'react-native-firebase'
+import styles from '../style/Form'
 
 class Login extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      user: [],
-      email: '',
-      password: '',
-      spinner: false
-    }
+  state = {
+    user: [],
+    email: '',
+    password: '',
+    errMessage: null,
+    spinner: false
+  }
+
+  login = () => {
+    const { email, password } = this.state
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(() => this.props.navigation.navigate('Home'))
+      .catch(error => this.setState({ errMessage: error.message }))
   }
 
   render () {
-    const loginAction = () => {
-      this.setState({
-        spinner: true
-      })
-      this.state.user.push({
-        email: this.state.email,
-        password: this.state.password
-      })
-      loginuser()
-    }
-    let loginuser = async () => {
-      await this.props
-        .dispatch(login(this.state.user[0]))
-        .then(() => {
-          this.setState({
-            spinner: false
-          })
-          this.props.navigation.push('Home')
-        })
-        .catch(err => {
-          this.setState({
-            spinner: false
-          })
-          alert('Gagal ' + err)
-        })
-    }
-
     return (
       <>
         <StatusBar
@@ -79,6 +60,7 @@ class Login extends Component {
                   this.secondTextInput.focus()
                 }}
                 onChangeText={email => this.setState({ email })}
+                // value={this.state.email}
                 returnKeyType={'next'}
                 placeholder='Email'
                 autoCompleteType='email'
@@ -92,6 +74,7 @@ class Login extends Component {
                   this.secondTextInput = input
                 }}
                 onChangeText={password => this.setState({ password })}
+                // value={this.state.password}
                 style={styles.inputText}
                 placeholder='Password'
                 placeholderTextColor='grey'
@@ -101,8 +84,7 @@ class Login extends Component {
               <Button
                 icon='chevron-right'
                 mode='contained'
-                // onPress={loginAction}
-                onPress={() => this.props.navigation.navigate('Home')}
+                onPress={this.login}
                 style={styles.buttonLogin}
               >
                 login
