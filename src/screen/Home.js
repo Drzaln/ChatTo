@@ -1,11 +1,48 @@
 import React, { Component } from 'react'
 import { View, StatusBar, StyleSheet } from 'react-native'
 import { Appbar, FAB } from 'react-native-paper'
-import MapView from 'react-native-maps'
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
+import GetLocation from 'react-native-get-location'
 
 export default class Home extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      mapRegion: null,
+      latitude: 0,
+      longitude: 0
+    }
+  }
+  componentDidMount = async () => {
+    await this.currentPosition()
+  }
+
+  currentPosition () {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 15000
+    })
+      .then(location => {
+        let region = {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.00922 * 1.5,
+          longitudeDelta: 0.00421 * 1.5
+        }
+
+        this.setState({
+          mapRegion: region,
+          latitude: location.latitude,
+          longitude: location.longitude
+        })
+      })
+      .catch(error => {
+        const { code, message } = error
+      })
+  }
+
   render () {
-    console.log(this.state)
+    console.log(`location`, this.state.latitude)
     return (
       <>
         <StatusBar
@@ -14,22 +51,47 @@ export default class Home extends Component {
           barStyle='default'
         />
         <View style={{ flex: 1 }}>
+          <MapView
+            showsCompass={false}
+            showsUserLocation
+            followsUserLocation
+            provider={PROVIDER_GOOGLE}
+            style={styles.map}
+            region={this.state.mapRegion}
+          >
+            {/* <Marker
+              onPress={() => console.warn('terpencet')}
+              draggable
+              coordinate={{
+                latitude: this.state.latitude,
+                longitude: this.state.longitude
+              }}
+              title='fullname'
+              description="hey i'm here!"
+            /> */}
+          </MapView>
           <FAB
             color='#589167'
-            style={styles.fab}
+            style={styles.fabBack}
             small
             icon='arrow-back'
-            onPress={() => console.log('Pressed')}
+            onPress={() => console.warn('Pressed')}
           />
-          <MapView
-            style={styles.map}
-            initialRegion={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421
-            }}
-          />
+          {this.state.latitude === 0 ? (
+            <FAB
+              color='#589167'
+              style={styles.fabLoc}
+              icon='location-searching'
+              onPress={() => {}}
+            />
+          ) : (
+            <FAB
+              color='#589167'
+              style={styles.fabLoc}
+              icon='my-location'
+              onPress={() => this.currentPosition()}
+            />
+          )}
         </View>
         <View>
           <Appbar style={styles.bottom}>
@@ -66,11 +128,19 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'white'
   },
-  fab: {
+  fabBack: {
     position: 'absolute',
     margin: 16,
     left: 0,
     top: '3%',
+    backgroundColor: 'white',
+    color: '#589167'
+  },
+  fabLoc: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'white',
     color: '#589167'
   }
