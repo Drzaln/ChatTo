@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "44536220817",
+    "firebase_url": "https://chatto-1566133897490.firebaseio.com",
+    "project_id": "chatto-1566133897490",
+    "storage_bucket": "chatto-1566133897490.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44536220817:android:5cfbf669c61f1bd7",
+        "android_client_info": {
+          "package_name": "com.chatto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "44536220817-7nr0s2risn7m1j1upvdcks5o1gr2elts.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdlfumlts5lTPHl9dTyTEGIQBoaed9dGc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "44536220817-7nr0s2risn7m1j1upvdcks5o1gr2elts.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
