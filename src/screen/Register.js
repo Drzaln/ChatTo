@@ -14,7 +14,7 @@ import firebase from 'react-native-firebase'
 
 class Register extends Component {
   state = {
-    username: '',
+    fullname: '',
     email: '',
     password: '',
     errMessage: null,
@@ -27,7 +27,7 @@ class Register extends Component {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(user => this.props.navigation.navigate('Home'))
-      .catch(error => this.setState({errMessage: error.message}))
+      .catch(error => alert(error))
   }
 
   render () {
@@ -60,10 +60,9 @@ class Register extends Component {
                 onSubmitEditing={() => {
                   this.firstTextInput.focus()
                 }}
-                onChangeText={username => this.setState({ username })}
-                // value={this.state.username}
+                onChangeText={fullname => this.setState({ fullname })}
                 returnKeyType={'next'}
-                placeholder='Username'
+                placeholder='Fullname'
                 placeholderTextColor='grey'
                 clearTextOnFocus
                 autoFocus
@@ -78,7 +77,6 @@ class Register extends Component {
                   this.secondTextInput.focus()
                 }}
                 onChangeText={email => this.setState({ email })}
-                // value={this.state.email}
                 returnKeyType={'next'}
                 keyboardType='email-address'
                 placeholder='Email'
@@ -90,7 +88,6 @@ class Register extends Component {
                   this.secondTextInput = input
                 }}
                 onChangeText={password => this.setState({ password })}
-                // value={this.state.password}
                 style={styles.inputText}
                 placeholder='Password'
                 placeholderTextColor='grey'

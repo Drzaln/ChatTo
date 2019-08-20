@@ -26,7 +26,7 @@ class Login extends Component {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => this.props.navigation.navigate('Home'))
-      .catch(error => this.setState({ errMessage: error.message }))
+      .catch(error => alert('Wrong Password'))
   }
 
   render () {
