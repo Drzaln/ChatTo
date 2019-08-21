@@ -5,15 +5,13 @@ import {
   StatusBar,
   TextInput,
   TouchableOpacity,
-  Alert
 } from 'react-native'
 import { Button } from 'react-native-paper'
-import Spinner from 'react-native-loading-spinner-overlay'
+import { GiftedChat } from 'react-native-gifted-chat'
 import styles from '../style/Form'
 import firebase from 'react-native-firebase'
-import GetLocation from 'react-native-get-location'
 
-class Register extends Component {
+class Chat extends Component {
   constructor () {
     super()
 
@@ -24,94 +22,20 @@ class Register extends Component {
       errMessage: null,
       spinner: false,
       latitude: null,
-      longitude: null
+      longitude: null,
+      datauser: this.props.navigation.getParam('data'),
     }
   }
 
-  componentDidMount = () => {
-    this.currentPosition()
-  }
-
-  currentPosition () {
-    GetLocation.getCurrentPosition({
-      enableHighAccuracy: true,
-      timeout: 15000
-    })
-      .then(location => {
-        let region = {
-          latitude: location.latitude,
-          longitude: location.longitude,
-          latitudeDelta: 0.00922 * 1.5,
-          longitudeDelta: 0.00421 * 1.5
-        }
-
-        this.setState({
-          mapRegion: region,
-          latitude: location.latitude,
-          longitude: location.longitude
-        })
-      })
-      .catch(error => {
-        const { code, message } = error
-      })
-  }
-
-  register = () => {
-    this.setState({
-      spinner: true
-    })
-    const { email, password } = this.state
-    const ref = firebase.firestore().collection('users')
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(response => {
-        let data = {
-          fullname: this.state.fullname,
-          email: this.state.email,
-          avatar:
-            'https://pixelmator-pro.s3.amazonaws.com/community/avatar_empty@2x.png',
-          latitude: this.state.latitude,
-          longitude: this.state.longitude,
-          uid: response.user.uid
-        }
-        ref.doc(response.user.uid).set(data)
-        this.setState({
-          fullname: '',
-          email: '',
-          errMessage: null,
-          spinner: false,
-          latitude: null,
-          longitude: null
-        })
-        // this.props.navigation.navigate('Home')
-      })
-      .catch(error => {
-        alert(error)
-        this.setState({
-          spinner: false
-        })
-      })
-  }
-
-  componentWillUnmount () {
-    this.currentPosition()
-  }
-
   render () {
+      console.log(`data`, this.state.datauser)
     return (
       <>
         <StatusBar
-          translucent
           backgroundColor='#ffffff'
           barStyle='dark-content'
         />
         <View style={styles.background}>
-          <Spinner
-            visible={this.state.spinner}
-            textContent={'Loading...'}
-            textStyle={{ color: '#fff' }}
-          />
           <View style={styles.body}>
             <View
               style={{
@@ -165,14 +89,12 @@ class Register extends Component {
               <Button
                 icon='add'
                 mode='contained'
-                onPress={() => this.register()}
                 style={styles.buttonLogin}
               >
                 register
               </Button>
             </View>
             <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('Login')}
               style={{ alignItems: 'flex-end', marginTop: 16 }}
             >
               <Text style={{ color: 'grey' }}>
@@ -186,4 +108,4 @@ class Register extends Component {
   }
 }
 
-export default Register
+export default Chat

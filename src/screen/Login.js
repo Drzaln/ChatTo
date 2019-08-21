@@ -72,7 +72,12 @@ class Login extends Component {
           spinner: false
         })
       })
-      .catch(error => alert('Wrong Password'))
+      .catch(error => {
+        alert('Wrong Password')
+        this.setState({
+          spinner: false
+        })
+      })
   }
 
   componentWillUnmount = () => {
