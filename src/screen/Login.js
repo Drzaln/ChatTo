@@ -9,6 +9,7 @@ import {
 import { Button } from 'react-native-paper'
 import Spinner from 'react-native-loading-spinner-overlay'
 import firebase from 'react-native-firebase'
+import GetLocation from 'react-native-get-location'
 import styles from '../style/Form'
 
 class Login extends Component {
@@ -17,16 +18,65 @@ class Login extends Component {
     email: '',
     password: '',
     errMessage: null,
-    spinner: false
+    spinner: false,
+    latitude: null,
+    longitude: null
+  }
+
+  componentDidMount = () => {
+    this.currentPosition()
+  }
+
+  currentPosition () {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 15000
+    })
+      .then(location => {
+        let region = {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.00922 * 1.5,
+          longitudeDelta: 0.00421 * 1.5
+        }
+
+        this.setState({
+          mapRegion: region,
+          latitude: location.latitude,
+          longitude: location.longitude
+        })
+      })
+      .catch(error => {
+        const { code, message } = error
+      })
   }
 
   login = () => {
+    this.setState({
+      spinner: true
+    })
     const { email, password } = this.state
+    const ref = firebase.firestore().collection('users')
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then(() => this.props.navigation.navigate('Home'))
+      .then(response => {
+        let data = {
+          latitude: this.state.latitude,
+          longitude: this.state.longitude
+        }
+        ref.doc(response.user.uid).update(data)
+        this.setState({
+          fullname: '',
+          email: '',
+          spinner: false
+        })
+      })
       .catch(error => alert('Wrong Password'))
+  }
+
+  componentWillUnmount = () => {
+    this.currentPosition()
   }
 
   render () {
@@ -34,7 +84,7 @@ class Login extends Component {
       <>
         <StatusBar
           translucent
-          backgroundColor='rgba(0, 0, 0, 0)'
+          backgroundColor='#ffffff'
           barStyle='dark-content'
         />
         <View style={styles.background}>

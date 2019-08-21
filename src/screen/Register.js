@@ -11,23 +11,86 @@ import { Button } from 'react-native-paper'
 import Spinner from 'react-native-loading-spinner-overlay'
 import styles from '../style/Form'
 import firebase from 'react-native-firebase'
+import GetLocation from 'react-native-get-location'
 
 class Register extends Component {
-  state = {
-    fullname: '',
-    email: '',
-    password: '',
-    errMessage: null,
-    spinner: false
+  constructor () {
+    super()
+
+    this.state = {
+      fullname: '',
+      email: '',
+      password: '',
+      errMessage: null,
+      spinner: false,
+      latitude: null,
+      longitude: null
+    }
+  }
+
+  componentDidMount = () => {
+    this.currentPosition()
+  }
+
+  currentPosition () {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 15000
+    })
+      .then(location => {
+        let region = {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.00922 * 1.5,
+          longitudeDelta: 0.00421 * 1.5
+        }
+
+        this.setState({
+          mapRegion: region,
+          latitude: location.latitude,
+          longitude: location.longitude
+        })
+      })
+      .catch(error => {
+        const { code, message } = error
+      })
   }
 
   register = () => {
+    this.setState({
+      spinner: true
+    })
     const { email, password } = this.state
+    const ref = firebase.firestore().collection('users')
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(user => this.props.navigation.navigate('Home'))
+      .then(response => {
+        let data = {
+          fullname: this.state.fullname,
+          email: this.state.email,
+          avatar:
+            'https://pixelmator-pro.s3.amazonaws.com/community/avatar_empty@2x.png',
+          latitude: this.state.latitude,
+          longitude: this.state.longitude,
+          uid: response.user.uid
+        }
+        ref.doc(response.user.uid).set(data)
+        this.setState({
+          fullname: '',
+          email: '',
+          errMessage: null,
+          spinner: false,
+          latitude: null,
+          longitude: null
+        })
+        // this.props.navigation.navigate('Home')
+      })
       .catch(error => alert(error))
+  }
+
+  componentWillUnmount () {
+    this.currentPosition()
   }
 
   render () {
@@ -35,7 +98,7 @@ class Register extends Component {
       <>
         <StatusBar
           translucent
-          backgroundColor='rgba(0, 0, 0, 0)'
+          backgroundColor='#ffffff'
           barStyle='dark-content'
         />
         <View style={styles.background}>
@@ -89,7 +152,7 @@ class Register extends Component {
                 }}
                 onChangeText={password => this.setState({ password })}
                 style={styles.inputText}
-                placeholder='Password'
+                placeholder='Password, min 6 characters'
                 placeholderTextColor='grey'
                 clearTextOnFocus
                 secureTextEntry

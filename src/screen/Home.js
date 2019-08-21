@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { View, StatusBar, StyleSheet } from 'react-native'
+import { View, StatusBar, StyleSheet, BackHandler } from 'react-native'
 import { Appbar, FAB } from 'react-native-paper'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 import GetLocation from 'react-native-get-location'
-import firebase from "react-native-firebase";
+import firebase from 'react-native-firebase'
 
 export default class Home extends Component {
   constructor (props) {
@@ -12,20 +12,23 @@ export default class Home extends Component {
       mapRegion: null,
       latitude: 0,
       longitude: 0,
-      currentUser: null
+      currentUser: [],
+      user: []
     }
   }
 
   logout = () => {
-    firebase.auth().signOut()
-    .then(() => this.props.navigation.navigate('Login'))
+    firebase
+      .auth()
+      .signOut()
+      .then(() => this.props.navigation.navigate('Login'))
   }
 
   componentDidMount = async () => {
     await this.currentPosition()
     const { currentUser } = firebase.auth()
 
-    this.setState({ currentUser })
+    this.setState({ currentUser, user: firebase.auth().currentUser.providerData[0] })
   }
 
   currentPosition () {
@@ -53,7 +56,7 @@ export default class Home extends Component {
   }
 
   render () {
-    console.log(`location`, this.state.latitude)
+    console.log(`user`, this.state.user.email)
     return (
       <>
         <StatusBar
@@ -65,6 +68,8 @@ export default class Home extends Component {
           <MapView
             showsCompass={false}
             showsUserLocation
+            followsUserLocation
+            showsMyLocationButton={false}
             provider={PROVIDER_GOOGLE}
             style={styles.map}
             region={this.state.mapRegion}
@@ -85,10 +90,11 @@ export default class Home extends Component {
             style={styles.fabBack}
             small
             icon='arrow-back'
-            onPress={() => console.warn('Pressed')}
+            onPress={() => BackHandler.exitApp()}
           />
           {this.state.latitude === 0 ? (
             <FAB
+              small
               color='#589167'
               style={styles.fabLoc}
               icon='location-searching'
@@ -96,6 +102,7 @@ export default class Home extends Component {
             />
           ) : (
             <FAB
+              small
               color='#589167'
               style={styles.fabLoc}
               icon='my-location'
@@ -142,7 +149,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     margin: 16,
     left: 0,
-    top: '3%',
+    top: '4%',
     backgroundColor: 'white',
     color: '#589167'
   },
@@ -150,7 +157,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     margin: 16,
     right: 0,
-    bottom: 0,
+    top: '4%',
     backgroundColor: 'white',
     color: '#589167'
   }
