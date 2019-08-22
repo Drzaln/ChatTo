@@ -68,6 +68,7 @@ class Home extends Component {
       'hardwareBackPress',
       this.handleBackButtonClick
     )
+    this.updateLoc()
   }
 
   componentWillUnmount () {
@@ -75,6 +76,16 @@ class Home extends Component {
       'hardwareBackPress',
       this.handleBackButtonClick
     )
+    this.updateLoc()
+  }
+
+  updateLoc () {
+    const ref = firebase.firestore().collection('users')
+    let data = {
+      latitude: this.state.latitude,
+      longitude: this.state.longitude
+    }
+    ref.doc(firebase.auth().currentUser.uid).update(data)
   }
 
   handleBackButtonClick () {
@@ -100,6 +111,8 @@ class Home extends Component {
           latitude: location.latitude,
           longitude: location.longitude
         })
+
+        this.updateLoc()
       })
       .catch(error => {
         const { code, message } = error
