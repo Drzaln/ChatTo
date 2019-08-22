@@ -6,6 +6,7 @@ import Login from '../../screen/Login'
 import Register from '../../screen/Register'
 import Loading from '../../screen/Loading'
 import Chat from '../../screen/Chat'
+import Profile from "../../screen/Profile";
 
 const AppNavigator = createSwitchNavigator(
   {
@@ -13,7 +14,8 @@ const AppNavigator = createSwitchNavigator(
     Home,
     Login,
     Register,
-    Chat
+    Chat,
+    Profile
   },
   {
     headerMode: 'none',

@@ -74,52 +74,58 @@ class Register extends Component {
   }
 
   register = () => {
+    const { email, password } = this.state
     this.setState({
       spinner: true
     })
-    if (this.state.fullname === '' || this.state.email === '' || this.state.password === '') {
+    if (
+      this.state.fullname === '' ||
+      this.state.email === '' ||
+      this.state.password === ''
+    ) {
       this.setState({
         spinner: false
       })
       alert('Oops, please fill the field')
+    } else {
+      const ref = firebase.firestore().collection('users')
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(response => {
+          console.log(`respon ==> `, response)
+          response.user.updateProfile({
+            displayName: this.state.fullname,
+            photoURL:
+              'https://pixelmator-pro.s3.amazonaws.com/community/avatar_empty@2x.png'
+          })
+          let data = {
+            fullname: this.state.fullname,
+            email: this.state.email,
+            avatar:
+              'https://pixelmator-pro.s3.amazonaws.com/community/avatar_empty@2x.png',
+            latitude: this.state.latitude,
+            longitude: this.state.longitude,
+            uid: response.user.uid
+          }
+          ref.doc(response.user.uid).set(data)
+          this.setState({
+            fullname: '',
+            email: '',
+            errMessage: null,
+            spinner: false,
+            latitude: null,
+            longitude: null
+          })
+          // this.props.navigation.navigate('Home')
+        })
+        .catch(error => {
+          alert(error)
+          this.setState({
+            spinner: false
+          })
+        })
     }
-    const { email, password } = this.state
-    const ref = firebase.firestore().collection('users')
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(response => {
-        console.log(`respon ==> `, response)
-        response.user.updateProfile({
-          displayName: this.state.fullname,
-          photoURL: 'https://pixelmator-pro.s3.amazonaws.com/community/avatar_empty@2x.png',
-        })
-        let data = {
-          fullname: this.state.fullname,
-          email: this.state.email,
-          avatar:
-            'https://pixelmator-pro.s3.amazonaws.com/community/avatar_empty@2x.png',
-          latitude: this.state.latitude,
-          longitude: this.state.longitude,
-          uid: response.user.uid
-        }
-        ref.doc(response.user.uid).set(data)
-        this.setState({
-          fullname: '',
-          email: '',
-          errMessage: null,
-          spinner: false,
-          latitude: null,
-          longitude: null
-        })
-        // this.props.navigation.navigate('Home')
-      })
-      .catch(error => {
-        alert(error)
-        this.setState({
-          spinner: false
-        })
-      })
   }
 
   componentWillUnmount () {
@@ -204,7 +210,7 @@ class Register extends Component {
               style={{ alignItems: 'flex-end', marginTop: 16 }}
             >
               <Text style={{ color: 'grey' }}>
-                Already have account? Please login
+                Already have an account? Please login
               </Text>
             </TouchableOpacity>
           </View>

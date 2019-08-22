@@ -14,7 +14,7 @@ import GetLocation from 'react-native-get-location'
 import styles from '../style/Form'
 
 class Login extends Component {
-  constructor(){
+  constructor () {
     super()
     this.state = {
       user: [],
@@ -73,6 +73,7 @@ class Login extends Component {
   }
 
   login = () => {
+    const { email, password } = this.state
     this.setState({
       spinner: true
     })
@@ -81,30 +82,30 @@ class Login extends Component {
         spinner: false
       })
       alert('Oops, please fill the field')
+    } else {
+      const ref = firebase.firestore().collection('users')
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(response => {
+          let data = {
+            latitude: this.state.latitude,
+            longitude: this.state.longitude
+          }
+          ref.doc(response.user.uid).update(data)
+          this.setState({
+            fullname: '',
+            email: '',
+            spinner: false
+          })
+        })
+        .catch(error => {
+          alert('Wrong Password')
+          this.setState({
+            spinner: false
+          })
+        })
     }
-    const { email, password } = this.state
-    const ref = firebase.firestore().collection('users')
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(response => {
-        let data = {
-          latitude: this.state.latitude,
-          longitude: this.state.longitude
-        }
-        ref.doc(response.user.uid).update(data)
-        this.setState({
-          fullname: '',
-          email: '',
-          spinner: false
-        })
-      })
-      .catch(error => {
-        alert('Wrong Password')
-        this.setState({
-          spinner: false
-        })
-      })
   }
 
   componentWillUnmount = () => {
@@ -177,7 +178,7 @@ class Login extends Component {
               style={{ alignItems: 'flex-end', marginTop: 16 }}
             >
               <Text style={{ color: 'grey' }}>
-                Don't have account? Sign up here
+                Don't have an account? Sign up here
               </Text>
             </TouchableOpacity>
           </View>

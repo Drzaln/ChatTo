@@ -11,6 +11,7 @@ import {
   TouchableOpacity
 } from 'react-native'
 import { Appbar, FAB } from 'react-native-paper'
+import { Avatar } from 'react-native-elements'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 import { withNavigation } from 'react-navigation'
 import GetLocation from 'react-native-get-location'
@@ -121,7 +122,7 @@ class Home extends Component {
   }
 
   render () {
-    console.log(`current user`,firebase.auth().currentUser.displayName)
+    console.log(`current user`, firebase.auth().currentUser.displayName)
     return (
       <>
         <StatusBar
@@ -221,10 +222,11 @@ class Home extends Component {
         </View>
         <View>
           <Appbar style={styles.bottom}>
-            <Appbar.Action
-              color='#589167'
-              icon='account-circle'
-              onPress={() => console.log('Pressed archive')}
+            <Avatar
+              rounded
+              source={{ uri: firebase.auth().currentUser.photoURL }}
+              containerStyle={{ marginLeft: '3%' }}
+              onPress={() => this.props.navigation.navigate('Profile')}
             />
             <Appbar.Content
               titleStyle={{ color: '#207561' }}
