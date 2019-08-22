@@ -100,7 +100,7 @@ class Login extends Component {
           })
         })
         .catch(error => {
-          alert('Wrong Password')
+          alert('Wrong Email or Password')
           this.setState({
             spinner: false
           })

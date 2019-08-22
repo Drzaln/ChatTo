@@ -68,7 +68,9 @@ class Home extends Component {
       'hardwareBackPress',
       this.handleBackButtonClick
     )
-    this.updateLoc()
+    if (this.state.latitude !== 0) {
+      this.updateLoc()
+    }
   }
 
   componentWillUnmount () {
@@ -181,7 +183,7 @@ class Home extends Component {
               color='#589167'
               style={styles.fabLoc}
               icon='location-searching'
-              onPress={() => {}}
+              onPress={() => this.currentPosition()}
             />
           ) : (
             <FAB
