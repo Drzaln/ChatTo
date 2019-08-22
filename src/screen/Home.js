@@ -15,7 +15,6 @@ import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 import { withNavigation } from 'react-navigation'
 import GetLocation from 'react-native-get-location'
 import firebase from 'react-native-firebase'
-import { checkAndCreateRoom } from '../misc/firebase'
 
 const { width, height } = Dimensions.get('window')
 
@@ -105,6 +104,7 @@ class Home extends Component {
   }
 
   render () {
+    console.log(`current user`,firebase.auth().currentUser.displayName)
     return (
       <>
         <StatusBar
@@ -174,7 +174,12 @@ class Home extends Component {
                 onLongPress={() =>
                   this.friendPosition(user.latitude, user.longitude)
                 }
-                onPress={() => this.props.navigation.navigate('Chat',{friendId: user.uid, friendName: user.fullname})}
+                onPress={() =>
+                  this.props.navigation.navigate('Chat', {
+                    friendId: user.uid,
+                    friendName: user.fullname
+                  })
+                }
               >
                 <View style={styles.card} key={index}>
                   <Image
@@ -182,6 +187,7 @@ class Home extends Component {
                     source={{ uri: user.avatar }}
                     style={styles.cardImage}
                     resizeMode='cover'
+                    borderRadius={8}
                   />
                   <View style={styles.textContent}>
                     <Text numberOfLines={1} style={styles.cardtitle}>
@@ -262,6 +268,7 @@ const styles = StyleSheet.create({
     paddingRight: width - CARD_WIDTH
   },
   card: {
+    borderRadius: 8,
     padding: 10,
     elevation: 2,
     backgroundColor: '#FFF',

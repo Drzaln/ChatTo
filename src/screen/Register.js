@@ -5,7 +5,8 @@ import {
   StatusBar,
   TextInput,
   TouchableOpacity,
-  Alert
+  Alert,
+  BackHandler
 } from 'react-native'
 import { Button } from 'react-native-paper'
 import Spinner from 'react-native-loading-spinner-overlay'
@@ -83,10 +84,15 @@ class Register extends Component {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(response => {
-        let data = {
+        console.log(`respon ==> `, response)
+        response.user.updateProfile({
           displayName: this.state.fullname,
+          photoURL: 'https://pixelmator-pro.s3.amazonaws.com/community/avatar_empty@2x.png',
+        })
+        let data = {
+          fullname: this.state.fullname,
           email: this.state.email,
-          photoURL:
+          avatar:
             'https://pixelmator-pro.s3.amazonaws.com/community/avatar_empty@2x.png',
           latitude: this.state.latitude,
           longitude: this.state.longitude,

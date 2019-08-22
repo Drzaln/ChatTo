@@ -1,18 +1,14 @@
 import React, { Component } from 'react'
 import {
-  Text,
   View,
   StatusBar,
-  TextInput,
-  TouchableOpacity,
   BackHandler,
   StyleSheet
 } from 'react-native'
-import { Button, FAB } from 'react-native-paper'
+import { Button, FAB, IconButton, Appbar } from 'react-native-paper'
 import { GiftedChat } from 'react-native-gifted-chat'
 import { withNavigation } from 'react-navigation'
 import firebase from 'react-native-firebase'
-import { getRoomInfo } from '../misc/firebase'
 
 const db = firebase.database()
 
@@ -35,8 +31,6 @@ class Chat extends Component {
       'hardwareBackPress',
       this.handleBackButtonClick
     )
-    console.log(this.props.navigation.state.params.friendId)
-    console.log(firebase.auth().currentUser.providerData)
 
     db.ref('messages')
       .child(firebase.auth().currentUser.uid)
@@ -119,16 +113,19 @@ class Chat extends Component {
             }}
             onInputTextChanged={value => this.setState({ text: value })}
             isLoadingEarlier
-            isAnimated={true}
+            isAnimated
           />
-          <FAB
-            color='#589167'
-            style={styles.fabBack}
-            small
-            icon='arrow-back'
-            onPress={() => this.props.navigation.navigate('Home')}
-          />
-          <Text>testes</Text>
+          <Appbar style={styles.top} dark>
+            <Appbar.Action
+              color='#589167'
+              icon='arrow-back'
+              onPress={() => this.props.navigation.navigate('Home')}
+            />
+            <Appbar.Content
+              titleStyle={{ color: '#207561' }}
+              title={this.props.navigation.state.params.friendName}
+            />
+          </Appbar>
         </View>
       </>
     )
@@ -147,8 +144,15 @@ const styles = StyleSheet.create({
     color: '#589167'
   },
   background: {
-    backgroundColor: '#fff',
-    height: '100%',
-    padding: 16
+    backgroundColor: '#E6E6E6',
+    height: '100%'
+  },
+  top: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    backgroundColor: '#ffffff',
+    elevation: 0
   }
 })
