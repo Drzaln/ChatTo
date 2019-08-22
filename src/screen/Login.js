@@ -4,7 +4,8 @@ import {
   View,
   StatusBar,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  BackHandler
 } from 'react-native'
 import { Button } from 'react-native-paper'
 import Spinner from 'react-native-loading-spinner-overlay'
@@ -13,18 +14,38 @@ import GetLocation from 'react-native-get-location'
 import styles from '../style/Form'
 
 class Login extends Component {
-  state = {
-    user: [],
-    email: '',
-    password: '',
-    errMessage: null,
-    spinner: false,
-    latitude: null,
-    longitude: null
+  constructor(){
+    super()
+    this.state = {
+      user: [],
+      email: '',
+      password: '',
+      errMessage: null,
+      spinner: false,
+      latitude: null,
+      longitude: null
+    }
+    this.handleBackButtonClick = this.handleBackButtonClick.bind(this)
   }
 
   componentDidMount = () => {
     this.currentPosition()
+    BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackButtonClick
+    )
+  }
+
+  componentWillUnmount () {
+    BackHandler.removeEventListener(
+      'hardwareBackPress',
+      this.handleBackButtonClick
+    )
+  }
+
+  handleBackButtonClick () {
+    BackHandler.exitApp()
+    return true
   }
 
   currentPosition () {
@@ -55,6 +76,12 @@ class Login extends Component {
     this.setState({
       spinner: true
     })
+    if (this.state.email === '' || this.state.password === '') {
+      this.setState({
+        spinner: false
+      })
+      alert('Oops, please fill the field')
+    }
     const { email, password } = this.state
     const ref = firebase.firestore().collection('users')
     firebase

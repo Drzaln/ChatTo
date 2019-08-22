@@ -1,12 +1,7 @@
 import React, { Component } from 'react'
-import {
-  View,
-  StatusBar,
-  BackHandler,
-  StyleSheet
-} from 'react-native'
+import { View, StatusBar, BackHandler, StyleSheet } from 'react-native'
 import { Button, FAB, IconButton, Appbar } from 'react-native-paper'
-import { GiftedChat } from 'react-native-gifted-chat'
+import { GiftedChat, InputToolbar, Send } from 'react-native-gifted-chat'
 import { withNavigation } from 'react-navigation'
 import firebase from 'react-native-firebase'
 
@@ -97,11 +92,46 @@ class Chat extends Component {
     return true
   }
 
+  inputToolbar = props => {
+    return (
+      <InputToolbar
+        {...props}
+        containerStyle={{ backgroundColor: '#808080' }}
+      />
+    )
+  }
+
+  sendButton = props => {
+    return (
+      <Send
+        {...props}
+        containerStyle={{
+          borderRadius: 16,
+          borderColor: '#fff',
+          borderWidth: 1,
+          margin: 4
+        }}
+        textStyle={{ color: '#fff' }}
+      />
+    )
+  }
+
   render () {
     return (
       <>
         <StatusBar backgroundColor='#ffffff' barStyle='dark-content' />
         <View style={styles.background}>
+          <Appbar style={styles.top} dark>
+            <Appbar.Action
+              color='#589167'
+              icon='arrow-back'
+              onPress={() => this.props.navigation.navigate('Home')}
+            />
+            <Appbar.Content
+              titleStyle={{ color: '#207561' }}
+              title={this.props.navigation.state.params.friendName}
+            />
+          </Appbar>
           <GiftedChat
             text={this.state.text}
             messages={this.state.messages}
@@ -114,18 +144,9 @@ class Chat extends Component {
             onInputTextChanged={value => this.setState({ text: value })}
             isLoadingEarlier
             isAnimated
+            renderInputToolbar={this.inputToolbar}
+            renderSend={this.sendButton}
           />
-          <Appbar style={styles.top} dark>
-            <Appbar.Action
-              color='#589167'
-              icon='arrow-back'
-              onPress={() => this.props.navigation.navigate('Home')}
-            />
-            <Appbar.Content
-              titleStyle={{ color: '#207561' }}
-              title={this.props.navigation.state.params.friendName}
-            />
-          </Appbar>
         </View>
       </>
     )
@@ -148,7 +169,6 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   top: {
-    position: 'absolute',
     left: 0,
     right: 0,
     top: 0,

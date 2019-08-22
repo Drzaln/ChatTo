@@ -5,7 +5,6 @@ import {
   StatusBar,
   TextInput,
   TouchableOpacity,
-  Alert,
   BackHandler
 } from 'react-native'
 import { Button } from 'react-native-paper'
@@ -78,6 +77,12 @@ class Register extends Component {
     this.setState({
       spinner: true
     })
+    if (this.state.fullname === '' || this.state.email === '' || this.state.password === '') {
+      this.setState({
+        spinner: false
+      })
+      alert('Oops, please fill the field')
+    }
     const { email, password } = this.state
     const ref = firebase.firestore().collection('users')
     firebase

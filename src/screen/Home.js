@@ -45,6 +45,7 @@ class Home extends Component {
         }
       })
     })
+    this.handleBackButtonClick = this.handleBackButtonClick.bind(this)
   }
 
   logout = () => {
@@ -62,6 +63,22 @@ class Home extends Component {
       currentUser,
       user: firebase.auth().currentUser.providerData[0]
     })
+    BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackButtonClick
+    )
+  }
+
+  componentWillUnmount () {
+    BackHandler.removeEventListener(
+      'hardwareBackPress',
+      this.handleBackButtonClick
+    )
+  }
+
+  handleBackButtonClick () {
+    BackHandler.exitApp()
+    return true
   }
 
   currentPosition () {
