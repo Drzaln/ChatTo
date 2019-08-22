@@ -26,10 +26,27 @@ class Register extends Component {
       latitude: null,
       longitude: null
     }
+    this.handleBackButtonClick = this.handleBackButtonClick.bind(this)
   }
 
   componentDidMount = () => {
     this.currentPosition()
+    BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackButtonClick
+    )
+  }
+
+  componentWillUnmount () {
+    BackHandler.removeEventListener(
+      'hardwareBackPress',
+      this.handleBackButtonClick
+    )
+  }
+
+  handleBackButtonClick () {
+    this.props.navigation.navigate('Login')
+    return true
   }
 
   currentPosition () {
@@ -67,9 +84,9 @@ class Register extends Component {
       .createUserWithEmailAndPassword(email, password)
       .then(response => {
         let data = {
-          fullname: this.state.fullname,
+          displayName: this.state.fullname,
           email: this.state.email,
-          avatar:
+          photoURL:
             'https://pixelmator-pro.s3.amazonaws.com/community/avatar_empty@2x.png',
           latitude: this.state.latitude,
           longitude: this.state.longitude,
