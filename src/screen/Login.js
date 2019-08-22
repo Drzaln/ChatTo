@@ -108,10 +108,6 @@ class Login extends Component {
     }
   }
 
-  componentWillUnmount = () => {
-    this.currentPosition()
-  }
-
   render () {
     return (
       <>
