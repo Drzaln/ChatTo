@@ -22,8 +22,8 @@ class Login extends Component {
       password: '',
       errMessage: null,
       spinner: false,
-      latitude: null,
-      longitude: null
+      latitude: 0,
+      longitude: 0
     }
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this)
   }
