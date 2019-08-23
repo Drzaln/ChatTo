@@ -35,7 +35,8 @@ class Home extends Component {
       doc: []
     }
     const ref = firebase.firestore().collection('users')
-    ref.get().then(doc => {
+    ref.onSnapshot(doc => {
+      this.state.getDoc.splice(0)
       doc.forEach(data => {
         let item = data._data
         if (this.state.user.email !== item.email) {
@@ -137,7 +138,7 @@ class Home extends Component {
   }
 
   render () {
-    console.log(`current user`, firebase.auth().currentUser.displayName)
+    console.log(`statenyaa ==> `, this.state.doc)
     return (
       <>
         <StatusBar
