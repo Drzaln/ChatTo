@@ -132,8 +132,6 @@ class Home extends Component {
 
     this.setState({
       mapRegion: region,
-      // latitude: lat,
-      // longitude: long
     })
   }
 
