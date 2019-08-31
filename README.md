@@ -10,7 +10,8 @@
 - [Features](#features)
 - [Requirements](#requirements)
 - [Usage](#usage)
-- [Screenshoot](#screenshoot)
+- [Screenshot](#screenshot)
+- [GIF](#gif)
 
 ## Introduction
 
@@ -35,8 +36,10 @@ ChatTo is an app to chat and see the location from of our friends, so we can kno
 - Connect your phone to the pc or laptop and make sure your phone is connected with debugging mode
 - Finnaly, type `react-native run-android` and wait for the process to complete
 
-## Screenshoot
+## Screenshot
 
 <img src="src/shot.png" width="500px;" alt="X"/>
 
+## GIF
 
+[![chatto.gif](https://s3.gifyu.com/images/chatto.gif)](https://gifyu.com/image/hQf2)
